@@ -1,3 +1,9 @@
+# -*- coding: utf-8 -*-
+"""
+HTTP请求发送器
+功能：封装HTTP请求发送功能，支持GET、POST等方法，提供请求日志记录和响应处理
+"""
+
 import json
 import allure
 import pytest
@@ -13,18 +19,38 @@ from requests.packages.urllib3.exceptions import InsecureRequestWarning
 
 
 class SendRequest:
-    """发送接口请求，暂时只写了get和post方法的请求"""
+    """
+    HTTP请求发送器类
+    功能：
+    1. 发送GET、POST等HTTP请求
+    2. 处理请求参数和响应数据
+    3. 记录请求日志
+    4. 支持文件上传
+    5. 自动处理Cookie
+    """
 
     def __init__(self, cookie=None):
+        """
+        初始化SendRequest类
+        
+        Args:
+            cookie (dict, optional): 初始Cookie信息
+        """
         self.cookie = cookie
         self.read = ReadYamlData()
 
     def get(self, url, data, header):
         """
-        :param url: 接口地址
-        :param data: 请求参数
-        :param header: 请求头
-        :return:
+        发送GET请求
+        功能：发送HTTP GET请求并返回响应数据
+        
+        Args:
+            url (str): 接口地址
+            data (dict): 请求参数
+            header (dict): 请求头
+            
+        Returns:
+            dict: 包含响应状态码、响应文本、响应时间等信息的字典
         """
         requests.packages.urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
         try:
@@ -58,10 +84,16 @@ class SendRequest:
 
     def post(self, url, data, header):
         """
-        :param url:
-        :param data: verify=False忽略SSL证书验证
-        :param header:
-        :return:
+        发送POST请求
+        功能：发送HTTP POST请求并返回响应数据
+        
+        Args:
+            url (str): 接口地址
+            data (dict): 请求参数，verify=False忽略SSL证书验证
+            header (dict): 请求头
+            
+        Returns:
+            dict: 包含响应状态码、响应文本、响应时间等信息的字典
         """
         # 控制台输出InsecureRequestWarning错误
         requests.packages.urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
@@ -94,12 +126,22 @@ class SendRequest:
         return response_dict
 
     def send_request(self, **kwargs):
-
+        """
+        发送HTTP请求的通用方法
+        功能：使用requests.session发送请求，自动处理Cookie和异常
+        
+        Args:
+            **kwargs: requests.request()方法的所有参数
+            
+        Returns:
+            requests.Response: HTTP响应对象
+        """
         session = requests.session()
         result = None
         cookie = {}
         try:
             result = session.request(**kwargs)
+            # 提取响应中的Cookie并保存
             set_cookie = requests.utils.dict_from_cookiejar(result.cookies)
             if set_cookie:
                 cookie['Cookie'] = set_cookie
@@ -118,16 +160,21 @@ class SendRequest:
 
     def run_main(self, name, url, case_name, header, method, cookies=None, file=None, **kwargs):
         """
-        接口请求
-        :param name: 接口名
-        :param url: 接口地址
-        :param case_name: 测试用例
-        :param header:请求头
-        :param method:请求方法
-        :param cookies：默认为空
-        :param file: 上传文件接口
-        :param kwargs: 请求参数，根据yaml文件的参数类型
-        :return:
+        接口请求主方法
+        功能：发送HTTP请求并记录详细的请求日志，支持Allure报告集成
+        
+        Args:
+            name (str): 接口名称
+            url (str): 接口地址
+            case_name (str): 测试用例名称
+            header (dict): 请求头
+            method (str): 请求方法（GET、POST等）
+            cookies (dict, optional): Cookie信息，默认为空
+            file (dict, optional): 文件上传参数
+            **kwargs: 其他请求参数，根据YAML文件的参数类型
+            
+        Returns:
+            requests.Response: HTTP响应对象
         """
 
         try:

@@ -1,3 +1,9 @@
+# -*- coding: utf-8 -*-
+"""
+接口断言工具类
+功能：提供多种断言模式，用于验证接口响应结果是否符合预期
+"""
+
 import traceback
 import allure
 import jsonpath
@@ -8,23 +14,29 @@ from common.connection import ConnectMysql
 
 
 class Assertions:
-    """"
-    接口断言模式，支持
-    1）响应文本字符串包含模式断言
-    2）响应结果相等断言
-    3）响应结果不相等断言
-    4）响应结果任意值断言
-    5）数据库断言
-
+    """
+    接口断言工具类
+    功能：提供多种断言模式，支持以下断言类型：
+    1. 响应文本字符串包含模式断言
+    2. 响应结果相等断言
+    3. 响应结果不相等断言
+    4. 响应结果任意值断言
+    5. 数据库断言
+    6. 响应时间断言
     """
 
     def contains_assert(self, value, response, status_code):
         """
-        字符串包含断言模式，断言预期结果的字符串是否包含在接口的响应信息中
-        :param value: 预期结果，yaml文件的预期结果值
-        :param response: 接口实际响应结果
-        :param status_code: 响应状态码
-        :return: 返回结果的状态标识
+        字符串包含断言模式
+        功能：断言预期结果的字符串是否包含在接口的响应信息中
+        
+        Args:
+            value (dict): 预期结果，YAML文件的预期结果值
+            response (dict): 接口实际响应结果
+            status_code (int): 响应状态码
+            
+        Returns:
+            int: 断言结果状态标识，0表示成功，非0表示失败
         """
         # 断言状态标识，0成功，其他失败
         flag = 0
@@ -53,9 +65,15 @@ class Assertions:
     def equal_assert(self, expected_results, actual_results, statuc_code=None):
         """
         相等断言模式
-        :param expected_results: 预期结果，yaml文件validation值
-        :param actual_results: 接口实际响应结果
-        :return:
+        功能：断言预期结果与实际结果是否相等
+        
+        Args:
+            expected_results (dict): 预期结果，YAML文件validation值
+            actual_results (dict): 接口实际响应结果
+            statuc_code (int, optional): 响应状态码
+            
+        Returns:
+            int: 断言结果状态标识，0表示成功，非0表示失败
         """
         flag = 0
         if isinstance(actual_results, dict) and isinstance(expected_results, dict):

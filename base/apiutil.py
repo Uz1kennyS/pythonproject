@@ -1,3 +1,9 @@
+# -*- coding: utf-8 -*-
+"""
+API接口测试基础工具类
+功能：提供接口测试的核心功能，包括参数替换、接口请求、数据提取、断言等
+"""
+
 import json
 import re
 from json.decoder import JSONDecodeError
@@ -15,15 +21,37 @@ from conf.setting import FILE_PATH
 
 
 class RequestBase:
+    """
+    接口测试基础类
+    功能：
+    1. 解析YAML测试用例文件
+    2. 处理参数替换和动态数据生成
+    3. 发送HTTP请求
+    4. 提取响应数据
+    5. 执行断言验证
+    """
 
     def __init__(self):
-        self.run = SendRequest()
-        self.conf = OperationConfig()
-        self.read = ReadYamlData()
-        self.asserts = Assertions()
+        """
+        初始化RequestBase类
+        创建各个功能模块的实例对象
+        """
+        self.run = SendRequest()  # HTTP请求发送器
+        self.conf = OperationConfig()  # 配置文件读取器
+        self.read = ReadYamlData()  # YAML文件读写器
+        self.asserts = Assertions()  # 断言验证器
 
     def replace_load(self, data):
-        """yaml数据替换解析"""
+        """
+        YAML数据动态替换解析
+        功能：将YAML文件中的${函数名(参数)}格式的字符串替换为实际值
+        
+        Args:
+            data: 需要替换的数据，可以是字符串、字典或列表
+            
+        Returns:
+            替换后的数据
+        """
         str_data = data
         if not isinstance(data, str):
             str_data = json.dumps(data, ensure_ascii=False)
@@ -54,10 +82,15 @@ class RequestBase:
 
     def specification_yaml(self, base_info, test_case):
         """
-        接口请求处理基本方法
-        :param base_info: yaml文件里面的baseInfo
-        :param test_case: yaml文件里面的testCase
-        :return:
+        接口请求处理核心方法
+        功能：解析YAML测试用例，发送HTTP请求，处理响应数据，执行断言
+        
+        Args:
+            base_info (dict): YAML文件中的baseInfo部分，包含接口基本信息
+            test_case (dict): YAML文件中的testCase部分，包含测试用例数据
+            
+        Returns:
+            None
         """
         try:
             params_type = ['data', 'json', 'params']
@@ -120,6 +153,15 @@ class RequestBase:
 
     @classmethod
     def allure_attach_response(cls, response):
+        """
+        格式化响应数据用于Allure报告展示
+        
+        Args:
+            response: 接口响应数据
+            
+        Returns:
+            str: 格式化后的响应数据字符串
+        """
         if isinstance(response, dict):
             allure_response = json.dumps(response, ensure_ascii=False, indent=4)
         else:
@@ -128,10 +170,15 @@ class RequestBase:
 
     def extract_data(self, testcase_extarct, response):
         """
-        提取接口的返回值，支持正则表达式和json提取器
-        :param testcase_extarct: testcase文件yaml中的extract值
-        :param response: 接口的实际返回值
-        :return:
+        提取接口返回值（单个参数）
+        功能：支持正则表达式和JSON路径两种方式提取响应数据
+        
+        Args:
+            testcase_extarct (dict): YAML文件中定义的extract提取规则
+            response (str): 接口的实际响应文本
+            
+        Returns:
+            None: 提取的数据会写入extract.yaml文件
         """
         try:
             pattern_lst = ['(.*?)', '(.+?)', r'(\d)', r'(\d*)']
@@ -160,10 +207,15 @@ class RequestBase:
 
     def extract_data_list(self, testcase_extract_list, response):
         """
-        提取多个参数，支持正则表达式和json提取，提取结果以列表形式返回
-        :param testcase_extract_list: yaml文件中的extract_list信息
-        :param response: 接口的实际返回值,str类型
-        :return:
+        提取多个参数（列表形式）
+        功能：支持正则表达式和JSON路径提取，结果以列表形式返回
+        
+        Args:
+            testcase_extract_list (dict): YAML文件中定义的extract_list提取规则
+            response (str): 接口的实际响应文本
+            
+        Returns:
+            None: 提取的数据会写入extract.yaml文件
         """
         try:
             for key, value in testcase_extract_list.items():

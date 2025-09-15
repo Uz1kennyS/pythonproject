@@ -1,13 +1,24 @@
+# -*- coding: utf-8 -*-
+"""
+文件清理工具
+功能：提供文件删除和目录清理的功能，用于测试前后的数据清理
+"""
+
 import os
 from common.recordlog import logs
 
 
 def remove_file(filepath, endlst):
     """
-    删除文件
-    :param filepath: 路径
-    :param endlst: 删除的后缀，例如：['json','txt','attach']
-    :return:
+    删除指定目录下指定后缀的文件
+    功能：根据文件后缀批量删除文件，用于清理测试产生的临时文件
+    
+    Args:
+        filepath (str): 要清理的文件目录路径
+        endlst (list): 要删除的文件后缀列表，例如：['json','txt','attach']
+        
+    Returns:
+        None
     """
     try:
         if os.path.exists(filepath):
@@ -29,6 +40,16 @@ def remove_file(filepath, endlst):
 
 
 def remove_directory(path):
+    """
+    删除指定目录
+    功能：删除指定的目录或文件
+    
+    Args:
+        path (str): 要删除的目录或文件路径
+        
+    Returns:
+        None
+    """
     try:
         if os.path.exists(path):
             os.remove(path)

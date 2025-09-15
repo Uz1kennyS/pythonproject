@@ -1,3 +1,9 @@
+# -*- coding: utf-8 -*-
+"""
+测试用例全局配置文件
+功能：定义pytest的全局fixture，包括测试前后的处理逻辑
+"""
+
 import pytest
 import allure
 from common.readyaml import get_testcase_yaml
@@ -6,17 +12,23 @@ from common.recordlog import logs
 from common.connection import ConnectMysql
 
 """
--function：每一个函数或方法都会调用
--class：每一个类调用一次，一个类中可以有多个方法
--module：每一个.py文件调用一次，该文件内又有多个function和class
--session：是多个文件调用一次，可以跨.py文件调用，每个.py文件就是module,整个会话只会运行一次
--autouse：默认为false，不会自动执行，需要手动调用，为true可以自动执行，不需要调用
+pytest fixture作用域说明：
+- function：每一个函数或方法都会调用
+- class：每一个类调用一次，一个类中可以有多个方法
+- module：每一个.py文件调用一次，该文件内又有多个function和class
+- session：是多个文件调用一次，可以跨.py文件调用，每个.py文件就是module,整个会话只会运行一次
+- autouse：默认为false，不会自动执行，需要手动调用，为true可以自动执行，不需要调用
 - yield：前置、后置
 """
 
 
 @pytest.fixture(autouse=True)
 def start_test_and_end():
+    """
+    测试开始和结束的日志记录fixture
+    功能：在每个测试用例执行前后记录日志信息
+    作用域：function（每个测试函数都会执行）
+    """
     logs.info('-------------接口测试开始--------------')
     yield
     logs.info('-------------接口测试结束--------------')
@@ -25,6 +37,11 @@ def start_test_and_end():
 @pytest.fixture(scope='session', autouse=True)
 @allure.story("登录")
 def system_login():
+    """
+    系统登录fixture
+    功能：在测试会话开始时自动执行登录操作，为后续接口测试提供认证信息
+    作用域：session（整个测试会话只执行一次）
+    """
     try:
         api_info = get_testcase_yaml('./data/loginName.yaml')
         RequestBase().specification_yaml(api_info[0][0], api_info[0][1])
@@ -36,9 +53,11 @@ def system_login():
 @pytest.fixture(scope='session', autouse=True)
 def datadb_init():
     """
-    后置处理器，比如测试之后的数据清理
-    数据库可以预先预置一批本次测试的数据，在测试完成之后将这批数据清理，就不会对系统造成影响，也不会产生脏数据
-    :return:
+    数据库初始化fixture
+    功能：测试前后的数据清理，避免测试数据污染
+    说明：数据库可以预先预置一批本次测试的数据，在测试完成之后将这批数据清理，
+         就不会对系统造成影响，也不会产生脏数据
+    作用域：session（整个测试会话只执行一次）
     """
     # conn = ConnectMysql()
     # yield

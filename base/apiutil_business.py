@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
-# sys.path.insert(0, "..")
-
+"""
+业务接口测试基础工具类（旧版本）
+功能：提供业务场景接口测试的核心功能
+注意：此文件为旧版本实现，建议使用base/apiutil.py
+"""
 
 from common.sendrequest import SendRequest
 from common.readyaml import ReadYamlData
@@ -15,17 +18,39 @@ import re
 import traceback
 from json.decoder import JSONDecodeError
 
+# 全局断言对象实例
 assert_res = Assertions()
 
 
 class RequestBase(object):
+    """
+    业务接口测试基础类（旧版本）
+    功能：
+    1. 处理YAML格式的测试用例
+    2. 支持参数动态替换
+    3. 发送HTTP请求
+    4. 数据提取和断言验证
+    """
     def __init__(self):
-        self.run = SendRequest()
-        self.read = ReadYamlData()
-        self.conf = OperationConfig()
+        """
+        初始化RequestBase类
+        创建各个功能模块的实例对象
+        """
+        self.run = SendRequest()      # HTTP请求发送器
+        self.read = ReadYamlData()    # YAML文件读写器
+        self.conf = OperationConfig() # 配置文件读取器
 
     def handler_yaml_list(self, data_dict):
-        """处理yaml文件测试用例请求参数为list情况，以数组形式"""
+        """
+        处理YAML文件中请求参数为列表的情况
+        功能：将列表类型的参数转换为数组形式
+        
+        Args:
+            data_dict (dict): 包含列表参数的字典
+            
+        Returns:
+            dict: 处理后的参数字典
+        """
         try:
             for key, value in data_dict.items():
                 if isinstance(value, list):
@@ -36,7 +61,16 @@ class RequestBase(object):
             logs.error(str(traceback.format_exc()))
 
     def replace_load(self, data):
-        """yaml数据替换解析"""
+        """
+        YAML数据动态替换解析
+        功能：将YAML文件中的${函数名(参数)}格式的字符串替换为实际值
+        
+        Args:
+            data: 需要替换的数据，可以是字符串、字典或列表
+            
+        Returns:
+            替换后的数据
+        """
         str_data = data
         if not isinstance(data, str):
             str_data = json.dumps(data, ensure_ascii=False)
@@ -66,9 +100,14 @@ class RequestBase(object):
 
     def specification_yaml(self, case_info):
         """
-        规范yaml测试用例的写法
-        :param case_info: list类型,调试取case_info[0]-->dict
-        :return:
+        规范YAML测试用例的处理方法
+        功能：解析YAML测试用例，发送HTTP请求，处理响应数据，执行断言
+        
+        Args:
+            case_info (dict): YAML测试用例信息，包含baseInfo和testCase
+            
+        Returns:
+            None
         """
         params_type = ['params', 'data', 'json']
         cookie = None

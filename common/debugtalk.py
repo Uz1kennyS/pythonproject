@@ -1,3 +1,9 @@
+# -*- coding: utf-8 -*-
+"""
+动态数据生成工具类
+功能：提供各种动态数据生成方法，用于YAML测试用例中的参数替换
+"""
+
 import base64
 import calendar
 import datetime
@@ -15,16 +21,38 @@ import csv
 
 
 class DebugTalk:
+    """
+    动态数据生成工具类
+    功能：
+    1. 提供各种加密方法（MD5、SHA1、Base64）
+    2. 生成时间戳和时间格式数据
+    3. 从CSV文件读取测试数据
+    4. 生成随机数据
+    5. 从extract.yaml文件提取数据
+    """
 
     def __init__(self):
+        """
+        初始化DebugTalk类
+        创建YAML数据读取器实例
+        """
         self.read = ReadYamlData()
 
     def get_extract_data(self, node_name, randoms=None) -> str:
         """
-        获取extract.yaml数据，首先判断randoms是否为数字类型，如果不是就获取下一个node节点的数据
-        :param node_name: extract.yaml文件中的key值
-        :param randoms: int类型，0：随机读取；-1：读取全部，返回字符串形式；-2：读取全部，返回列表形式；其他根据列表索引取值，取第一个值为1，第二个为2，以此类推;
-        :return:
+        获取extract.yaml数据
+        功能：从extract.yaml文件中提取指定节点的数据，支持多种提取模式
+        
+        Args:
+            node_name (str): extract.yaml文件中的key值
+            randoms (int, optional): 提取模式
+                - 0: 随机读取
+                - -1: 读取全部，返回字符串形式
+                - -2: 读取全部，返回列表形式
+                - 其他数字: 根据列表索引取值（1表示第一个，2表示第二个，以此类推）
+                
+        Returns:
+            str: 提取的数据
         """
         data = self.read.get_extract_yaml(node_name)
         if randoms is not None and bool(re.compile(r'^[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?$').match(randoms)):
@@ -41,35 +69,84 @@ class DebugTalk:
         return data
 
     def get_extract_order_data(self, data, randoms):
-        """获取extract.yaml数据，不为0、-1、-2，则按顺序读取文件key的数据"""
+        """
+        按顺序获取extract.yaml数据
+        功能：根据索引顺序读取extract.yaml文件中指定key的数据
+        
+        Args:
+            data (list): 要处理的数据列表
+            randoms (int): 索引值（不为0、-1、-2）
+            
+        Returns:
+            指定索引位置的数据
+        """
         if randoms not in [0, -1, -2]:
             return data[randoms - 1]
 
     def md5_encryption(self, params):
-        """参数MD5加密"""
+        """
+        参数MD5加密
+        功能：对输入参数进行MD5加密
+        
+        Args:
+            params (str): 要加密的字符串
+            
+        Returns:
+            str: MD5加密后的字符串
+        """
         enc_data = hashlib.md5()
         enc_data.update(params.encode(encoding="utf-8"))
         return enc_data.hexdigest()
 
     def sha1_encryption(self, params):
-        """参数sha1加密"""
+        """
+        参数SHA1加密
+        功能：对输入参数进行SHA1加密
+        
+        Args:
+            params (str): 要加密的字符串
+            
+        Returns:
+            str: SHA1加密后的字符串
+        """
         enc_data = sha1()
         enc_data.update(params.encode(encoding="utf-8"))
         return enc_data.hexdigest()
 
     def base64_encryption(self, params):
-        """base64加密"""
+        """
+        Base64加密
+        功能：对输入参数进行Base64编码
+        
+        Args:
+            params (str): 要编码的字符串
+            
+        Returns:
+            bytes: Base64编码后的字节数据
+        """
         base_params = params.encode("utf-8")
         encr = base64.b64encode(base_params)
         return encr
 
     def timestamp(self):
-        """获取当前时间戳，10位"""
+        """
+        获取当前时间戳（10位）
+        功能：获取当前时间的10位时间戳
+        
+        Returns:
+            int: 10位时间戳
+        """
         t = int(time.time())
         return t
 
     def timestamp_thirteen(self):
-        """获取当前的时间戳，13位"""
+        """
+        获取当前时间戳（13位）
+        功能：获取当前时间的13位时间戳
+        
+        Returns:
+            int: 13位时间戳
+        """
         t = int(time.time()) * 1000
         return t
 

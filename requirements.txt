@@ -1,16 +1,35 @@
-allure_python_commons
-clickhouse_sqlalchemy
-Flask
-jsonpath
-pandas
-paramiko
-pymongo
-PyMySQL
-PyQt5
-pytest
-PyYAML
-redis
-requests
-SQLAlchemy
-urllib3
-faker
+# -*- coding: utf-8 -*-
+"""
+项目依赖包列表
+功能：定义自动化测试框架所需的Python第三方库及其版本
+"""
+
+# 测试报告相关
+allure_python_commons    # Allure测试报告生成库
+
+# 数据库相关
+clickhouse_sqlalchemy    # ClickHouse数据库连接
+PyMySQL                  # MySQL数据库连接
+pymongo                  # MongoDB数据库连接
+SQLAlchemy               # SQL数据库ORM框架
+redis                    # Redis数据库连接
+
+# Web框架
+Flask                    # Web应用框架
+
+# 数据处理
+pandas                   # 数据分析库
+jsonpath                 # JSON路径表达式解析
+PyYAML                   # YAML文件解析
+
+# 测试框架
+pytest                   # Python测试框架
+
+# 网络请求
+requests                 # HTTP请求库
+urllib3                  # HTTP客户端库
+
+# 其他工具
+paramiko                 # SSH连接库
+PyQt5                    # GUI界面库
+faker                    # 假数据生成库

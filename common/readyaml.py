@@ -1,3 +1,9 @@
+# -*- coding: utf-8 -*-
+"""
+YAML文件读写工具
+功能：提供YAML测试用例文件的读取、写入和解析功能
+"""
+
 import yaml
 import traceback
 import os
@@ -9,6 +15,16 @@ from yaml.scanner import ScannerError
 
 
 def get_testcase_yaml(file):
+    """
+    读取YAML测试用例文件
+    功能：解析YAML格式的测试用例文件，返回结构化的测试数据
+    
+    Args:
+        file (str): YAML文件路径
+        
+    Returns:
+        list: 解析后的测试用例列表
+    """
     testcase_list = []
     try:
         with open(file, 'r', encoding='utf-8') as f:
@@ -31,9 +47,18 @@ def get_testcase_yaml(file):
 
 
 class ReadYamlData:
-    """读写接口的YAML格式测试数据"""
+    """
+    YAML数据读写类
+    功能：提供YAML文件的读取、写入和数据提取功能
+    """
 
     def __init__(self, yaml_file=None):
+        """
+        初始化ReadYamlData类
+        
+        Args:
+            yaml_file (str, optional): YAML文件路径
+        """
         if yaml_file is not None:
             self.yaml_file = yaml_file
         else:
@@ -44,9 +69,11 @@ class ReadYamlData:
     @property
     def get_yaml_data(self):
         """
-        获取测试用例yaml数据
-        :param file: YAML文件
-        :return: 返回list
+        获取测试用例YAML数据
+        功能：读取并解析YAML文件内容
+        
+        Returns:
+            list: 解析后的YAML数据列表
         """
         # Loader=yaml.FullLoader表示加载完整的YAML语言，避免任意代码执行，无此参数控制台报Warning
         try:
@@ -58,10 +85,14 @@ class ReadYamlData:
 
     def write_yaml_data(self, value):
         """
-        写入数据需为dict，allow_unicode=True表示写入中文，sort_keys按顺序写入
-        写入YAML文件数据,主要用于接口关联
-        :param value: 写入数据，必须用dict
-        :return:
+        写入YAML文件数据
+        功能：将数据写入extract.yaml文件，主要用于接口关联和数据提取
+        
+        Args:
+            value (dict): 要写入的数据，必须为字典格式
+            
+        Returns:
+            None
         """
 
         file = None
@@ -83,17 +114,25 @@ class ReadYamlData:
     def clear_yaml_data(self):
         """
         清空extract.yaml文件数据
-        :param filename: yaml文件名
-        :return:
+        功能：清空extract.yaml文件中的所有内容
+        
+        Returns:
+            None
         """
         with open(FILE_PATH['EXTRACT'], 'w') as f:
             f.truncate()
 
     def get_extract_yaml(self, node_name, second_node_name=None):
         """
-        用于读取接口提取的变量值
-        :param node_name:
-        :return:
+        读取接口提取的变量值
+        功能：从extract.yaml文件中读取指定节点的数据
+        
+        Args:
+            node_name (str): 要读取的节点名称
+            second_node_name (str, optional): 二级节点名称
+            
+        Returns:
+            提取的数据值
         """
         if os.path.exists(FILE_PATH['EXTRACT']):
             pass

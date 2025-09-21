@@ -32,6 +32,7 @@ def start_test_and_end():
     logs.info('-------------接口测试开始--------------')
     yield
     logs.info('-------------接口测试结束--------------')
+    logs.info('-------------正在清理测试数据--------------')
 
 
 @pytest.fixture(scope='session', autouse=True)

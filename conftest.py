@@ -5,6 +5,9 @@ pytest全局配置文件
 """
 
 import time
+import pytest
+
+from common.readyaml import ReadYamlData
 
 
 def generate_test_summary(terminalreporter):
@@ -21,13 +24,14 @@ def generate_test_summary(terminalreporter):
     total = terminalreporter._numcollected  # 总测试用例数
     passed = len(terminalreporter.stats.get('passed', []))  # 通过数量
     failed = len(terminalreporter.stats.get('failed', []))  # 失败数量
-    error = len(terminalreporter.stats.get('error', []))    # 错误数量
+    error = len(terminalreporter.stats.get('error', []))  # 错误数量
     skipped = len(terminalreporter.stats.get('skipped', []))  # 跳过数量
 
     # 兼容不同pytest版本的会话开始时间属性
     # _session_start: pytest 8.x版本
     # _sessionstarttime: pytest 7.x版本
-    start_time = getattr(terminalreporter, "_session_start", None) or getattr(terminalreporter, "_sessionstarttime", None)
+    start_time = getattr(terminalreporter, "_session_start", None) or getattr(terminalreporter, "_sessionstarttime",
+                                                                              None)
 
     # 计算测试执行总时长
     if start_time is not None:
@@ -52,3 +56,8 @@ def generate_test_summary(terminalreporter):
 """
     print(summary)
     return summary
+
+
+@pytest.fixture(scope="session", autouse=True)
+def clear_data():
+    ReadYamlData.clear_yaml_data(self=None)
